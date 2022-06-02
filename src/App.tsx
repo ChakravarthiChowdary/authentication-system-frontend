@@ -1,25 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router";
+import "./App.css";
+
+import SignIn from "./pages/SignIn";
+import Navbar from "./components/Navbar";
+import NotFound from "./pages/NotFound";
+import { useAppSelector } from "./store/store";
+import UpdatePassword from "./pages/UpdatePassword";
+import SignUp from "./pages/SignUp";
 
 function App() {
+  const user = useAppSelector((state) => state.app.user);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (user && location.pathname !== "/") {
+      navigate("/");
+    }
+  }, [user, navigate, location]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <Routes>
+        {!user && (
+          <>
+            <Route path="/" element={<SignIn />} />
+            <Route path="/register" element={<SignUp />} />
+          </>
+        )}
+        {user && user.passwordChangeRequired && (
+          <Route path="/" element={<UpdatePassword />} />
+        )}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
   );
 }
 
