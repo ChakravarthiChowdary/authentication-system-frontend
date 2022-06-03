@@ -10,6 +10,10 @@ export const SIGN_UP_START = "SIGN_UP_START";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
 export const SIGN_UP_FAIL = "SIGN_UP_FAIL";
 
+export const UPDATE_PASSWORD_START = "UPDATE_PASSWORD_START";
+export const UPDATE_PASSWORD_SUCCESS = "UPDATE_PASSWORD_SUCCESS";
+export const UPDATE_PASSWORD_FAIL = "UPDATE_PASSWORD_FAIL";
+
 export const CLEAN_UP_AUTH_STATE = "CLEAN_UP_AUTH_STATE";
 
 export const signInUser = (
@@ -137,6 +141,59 @@ export const signUpUser = (
       });
     } catch (error) {
       dispatch({ type: SIGN_UP_FAIL, payload: error });
+    }
+  };
+};
+
+export const updatePassword = (
+  currentPassword: string,
+  newPassword: string,
+  confirmPassword: string
+): ThunkAction<void, RootState, unknown, AnyAction> => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({ type: UPDATE_PASSWORD_START });
+
+      const user = getState().app.user;
+
+      const response = await fetch(
+        "http://localhost:5000/app/v1/auth/updatepassword",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+            confirmPassword,
+            email: user ? user.email : "",
+            userId: user ? user.id : "",
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.errors || result.error) {
+        dispatch({
+          type: UPDATE_PASSWORD_FAIL,
+          payload: result.errors
+            ? {
+                message: result.errors[0].msg,
+                statusCode: 500,
+                requestStatus: "Fail",
+              }
+            : result.error,
+        });
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(result));
+
+      dispatch({ type: UPDATE_PASSWORD_SUCCESS, payload: result });
+    } catch (error) {
+      dispatch({ type: UPDATE_PASSWORD_FAIL, payload: error });
     }
   };
 };

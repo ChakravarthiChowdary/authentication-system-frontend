@@ -9,6 +9,9 @@ import {
   SIGN_UP_FAIL,
   SIGN_UP_START,
   SIGN_UP_SUCCESS,
+  UPDATE_PASSWORD_FAIL,
+  UPDATE_PASSWORD_START,
+  UPDATE_PASSWORD_SUCCESS,
 } from "./actions";
 
 const initalState: AuthState = {
@@ -61,6 +64,26 @@ export const reducer = (state = initalState, action: AnyAction) => {
         loading: false,
         error: action.payload,
         passwordChangeRequired: false,
+      };
+    case UPDATE_PASSWORD_START:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case UPDATE_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        passwordChangeRequired: false,
+        user: action.payload,
+      };
+    case UPDATE_PASSWORD_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
       };
     case CLEAN_UP_AUTH_STATE:
       return initalState;

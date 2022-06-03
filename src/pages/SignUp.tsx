@@ -3,7 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -16,7 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Copyright from "../components/CopyRight";
 import { Alert } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { signUpUser } from "../store/actions";
+import { CLEAN_UP_AUTH_STATE, signUpUser } from "../store/actions";
 import { useAppSelector } from "../store/store";
 import { LoadingButton } from "@mui/lab";
 
@@ -58,17 +57,18 @@ export default function SignUp() {
     if (uiError !== "") {
       timer = setTimeout(() => {
         setUiError("");
-      }, 3000);
+        dispatch({ type: CLEAN_UP_AUTH_STATE });
+      }, 5000);
     }
 
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [uiError]);
+  }, [uiError, dispatch]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    const { firstName, lastName, email, photoUrl, password, confirmPassword } =
+    const { firstName, lastName, email, password, confirmPassword } =
       form.values;
     if (
       firstName === "" ||
@@ -95,6 +95,7 @@ export default function SignUp() {
           photoUrl: "",
         },
       }));
+      if (email === "" && password === "" && confirmPassword === "") return;
     }
 
     if (form.errors.email !== "") {

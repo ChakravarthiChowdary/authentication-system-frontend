@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { Dispatch, useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router";
 import "./App.css";
 
@@ -8,17 +8,24 @@ import NotFound from "./pages/NotFound";
 import { useAppSelector } from "./store/store";
 import UpdatePassword from "./pages/UpdatePassword";
 import SignUp from "./pages/SignUp";
+import { useDispatch } from "react-redux";
+import { CLEAN_UP_AUTH_STATE } from "./store/actions";
 
 function App() {
-  const user = useAppSelector((state) => state.app.user);
+  const { user, error } = useAppSelector((state) => state.app);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch: Dispatch<any> = useDispatch();
 
   useEffect(() => {
     if (user && location.pathname !== "/") {
       navigate("/");
     }
   }, [user, navigate, location]);
+
+  useEffect(() => {
+    if (!user && error) dispatch({ type: CLEAN_UP_AUTH_STATE });
+  }, [location.pathname, dispatch, error, user]);
 
   return (
     <>

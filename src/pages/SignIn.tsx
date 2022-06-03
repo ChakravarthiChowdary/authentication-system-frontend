@@ -2,7 +2,6 @@ import React, { Dispatch, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -41,7 +40,8 @@ const SignIn = () => {
     if (error) {
       timer = setTimeout(() => {
         dispatch({ type: CLEAN_UP_AUTH_STATE });
-      }, 4000);
+        setUIError("");
+      }, 5000);
     }
 
     return () => {
@@ -49,7 +49,7 @@ const SignIn = () => {
         clearTimeout(timer);
       }
     };
-  }, [error]);
+  }, [error, dispatch]);
 
   const validateEmail = (email: string) => {
     return String(email)
