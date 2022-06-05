@@ -32,7 +32,7 @@ export default function UpdatePassword() {
     },
   });
   const dispatch: Dispatch<any> = useDispatch();
-  const { loading, error } = useAppSelector((state) => state.app);
+  const { loading, error, user } = useAppSelector((state) => state.app);
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null;

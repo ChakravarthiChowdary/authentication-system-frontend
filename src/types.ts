@@ -3,6 +3,7 @@ export interface AuthState {
   error: Error | null;
   user: User | null;
   passwordChangeRequired: boolean;
+  passwordUpdated: boolean;
 }
 
 export interface User {

@@ -113,12 +113,7 @@ const SignIn = () => {
     let emailError = "";
     let passwordError = "";
 
-    if (
-      form.errors.email !== "" ||
-      form.errors.password !== "" ||
-      form.values.email === "" ||
-      form.values.password === ""
-    ) {
+    if (form.values.email === "" || form.values.password === "") {
       if (form.values.email === "") {
         setUIError("Email cannot be empty.");
         emailError = "Email cannot be empty.";
@@ -135,7 +130,11 @@ const SignIn = () => {
         setUIError(form.errors.email);
       }
       if (form.errors.password !== "") {
-        setUIError(form.errors.password);
+        setUIError(
+          form.values.email === ""
+            ? "Email and password cannot be blank."
+            : form.errors.password
+        );
       }
 
       setForm((prevState) => ({

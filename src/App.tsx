@@ -9,7 +9,8 @@ import { useAppSelector } from "./store/store";
 import UpdatePassword from "./pages/UpdatePassword";
 import SignUp from "./pages/SignUp";
 import { useDispatch } from "react-redux";
-import { CLEAN_UP_AUTH_STATE } from "./store/actions";
+import { autoLogin, CLEAN_UP_AUTH_STATE } from "./store/actions";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const { user, error } = useAppSelector((state) => state.app);
@@ -18,14 +19,12 @@ function App() {
   const dispatch: Dispatch<any> = useDispatch();
 
   useEffect(() => {
-    if (user && location.pathname !== "/") {
-      navigate("/");
-    }
-  }, [user, navigate, location]);
+    if (!user && error) dispatch({ type: CLEAN_UP_AUTH_STATE });
+  }, [location.pathname]);
 
   useEffect(() => {
-    if (!user && error) dispatch({ type: CLEAN_UP_AUTH_STATE });
-  }, [location.pathname, dispatch, error, user]);
+    dispatch(autoLogin());
+  }, []);
 
   return (
     <>
@@ -35,6 +34,7 @@ function App() {
           <>
             <Route path="/" element={<SignIn />} />
             <Route path="/register" element={<SignUp />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
           </>
         )}
         {user && user.passwordChangeRequired && (
